@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&display=swap">
+  <title>SMS</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    @font-face {
+      font-family: "SF Pro Text";
+      src: url("./fonts/SFProText-Regular.ttf") format("truetype");
+      font-weight: 400;
+    }
+
+    @font-face {
+      font-family: "SF Pro Text";
+      src: url("./fonts/SFProText-Medium.ttf") format("truetype");
+      font-weight: 500;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 40px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: 375px;
+      background: #000;
+      overflow: hidden;
+      border: 1px solid #2a2a2a;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 24px 8px;
+      background: #000;
+    }
+
+    .status-time {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      margin-left: 15px;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .battery-wrap {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .battery-body {
+      border: 1.5px solid #fff;
+      border-radius: 3px;
+      padding: 1.5px 2px;
+      display: flex;
+      align-items: center;
+    }
+
+    .battery-fill {
+      width: 14px;
+      height: 7px;
+      background: #fff;
+      border-radius: 1px;
+    }
+
+    .battery-num {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 16px 10px;
+      background: #000;
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+      background: #191919;
+      border-radius: 16px;
+      padding: 9px 14px;
+    }
+
+    .back-btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 14px;
+      border: 0.05px solid rgba(255, 255, 255, 0.15);
+      pointer-events: none;
+      /* чтобы не мешало клику */
+    }
+
+    .back-btn span {
+      color: #000000;
+      padding: 2px 5px;
+      font-size: 12px;
+      border-radius: 20px;
+      background-color: white;
+    }
+
+    .contact-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #5C5C7B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .contact-pill {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #191919;
+      border-radius: 14px;
+      padding: 6px 14px;
+    }
+
+    .contact-pill::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 14px;
+      border: 0.05px solid rgba(255, 255, 255, 0.15);
+      pointer-events: none;
+      /* чтобы не мешало клику */
+    }
+
+    .contact-pill span {
+      color: #fff;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    /* ── Messages ── */
+    .messages {
+      background: #000;
+      padding: 0px 12px 20px;
+    }
+
+    .date-sep {
+      text-align: center;
+      margin: 10px 0 14px;
+    }
+
+    .date-sep span {
+      color: #7f7f7f;
+      font-size: 12px;
+      line-height: 1.6;
+      display: block;
+    }
+
+    .date-sep2 {
+      text-align: center;
+      margin: 22px 0 14px;
+    }
+
+    .date-sep2 span {
+      color: #7f7f7f;
+      font-size: 12px;
+      display: block;
+      line-height: 1.7;
+    }
+
+    .bubble-row {
+      position: relative;
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+      margin-left: 5px;
+    }
+
+    .bubble {
+      position: relative;
+      background: #262628;
+      border-radius: 23px 18px 18px 4px;
+      padding: 10px 14px;
+      max-width: 270px;
+      color: #ededef;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .bubble-tail {
+      position: absolute;
+      width: 20px;
+      left: -5px;
+      bottom: -10px;
+    }
+
+    .bubble a {
+      color: #007AFF;
+      text-decoration: none;
+    }
+
+    .bubble u {
+      text-decoration: underline;
+    }
+
+    .spacer {
+      height: 150px;
+    }
+
+    /* ── Input bar ── */
+    .input-bar {
+      padding: 10px 12px 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .plus-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #191919;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .text-field {
+      flex: 1;
+      background: #191919;
+      border-radius: 18px;
+      padding: 11px 14px;
+      color: #636363;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    /* ── Copy button ── */
+    .copy-btn {
+      background: #007AFF;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 36px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      font-family: inherit;
+      transition: opacity 0.2s, background 0.3s;
+    }
+
+    .copy-btn:hover {
+      opacity: 0.88;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.97);
+    }
+
+
+    .m900 {
+      font-weight: bold;
+    }
+
+    .micro {
+      position: absolute;
+      right: 20px;
+      bottom: 33px;
+      width: 30px;
+    }
+
+    .signal {
+      width: 90px;
+    }
+
+    .template-panel {
+      width: 375px;
+      margin: 20px auto;
+      padding: 10px;
+      background: #111;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: 'SF Pro Text', sans-serif;
+      color: white;
+      position: absolute;
+      left: 10%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="template-panel" style="
+  
+">
+    <strong>Шаблоны:</strong>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="showTimeInput('2005')"
+        style="flex:1; padding:8px; border-radius:8px; background:#007AFF; color:white; border:none; cursor:pointer;">2005</button>
+      <button onclick="showTimeInput('5050')"
+        style="flex:1; padding:8px; border-radius:8px; background:#FF9500; color:white; border:none; cursor:pointer;">5050</button>
+      <button onclick="showTimeInput('Nalog')"
+        style="flex:1; padding:8px; border-radius:8px; background:#FF3B30; color:white; border:none; cursor:pointer;">Налог</button>
+    </div>
+
+    <div id="timeInputContainer" style="display:none; flex-direction: row; gap:6px; align-items:center;">
+      <input id="templateTime" type="text" placeholder="Время (например 14:33)"
+        style="flex:1; padding:8px; border-radius:8px; border:none;">
+      <button onclick="applyTemplate()"
+        style="flex:1; padding:8px; border-radius:8px; background:#34C759; color:white; border:none; cursor:pointer;">Применить</button>
+    </div>
+  </div>
+
+  <!-- Phone -->
+  <div class="phone" id="phone">
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-time">20:05</span>
+      <img class="signal" src="./source/photo_2026-04-07_20-52-08.jpg" alt="">
+    </div>
+
+    <!-- Nav -->
+    <div class="nav-bar">
+      <div class="back-btn">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none">
+          <path d="M8 1L1.5 7.5L8 14" stroke="#ffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>294</span>
+      </div>
+      <div class="contact-col">
+        <div class="avatar">
+          <svg viewBox="0 0 64 64">
+            <circle fill="white" cx="32" cy="32" r="12" />
+            <path fill="white" d="M32 49c-12 0-20 8-20 16h40c0-8-8-16-20-16z" />
+          </svg>
+        </div>
+
+        <div class="contact-pill">
+          <span class="m900">900</span>
+          <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#8E8EA0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Messages -->
+    <div class="messages">
+
+      <div class="date-sep">
+        <span>Текстовое сообщение • SMS</span>
+        <span id="dateYesterday"></span>
+      </div>
+
+      <div class="bubble-row">
+        <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
+        <div class="bubble">
+          Ваш код для подтверждения регистрации на <a href="tel:022444444">Золотое Яблоко</a> - 5798. Никому не
+          сообщайте код
+
+        </div>
+
+      </div>
+
+      <div class="date-sep2">
+        <span id="dateToday"></span>
+      </div>
+
+      <div class="bubble-row">
+        <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
+        <div class="bubble">
+          EMC710 12:00 Зачисление 1001р <br>
+          Баланс: 12 581 381.86р
+        </div>
+      </div>
+
+      <div class="bubble-row">
+        <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
+        <div class="bubble">
+          Перевод приостановлен. <br>
+          Операция заблокирована антифрод-системой. <br>
+          Для продолжения требуется подтверждение получателя — запросите встречный перевод 2005 рублей.
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+    </div>
+
+    <!-- Input bar -->
+    <div class="input-bar">
+      <div class="plus-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="#8E8EA0">
+          <path d="M7 1v12M1 7h12" stroke="#636363" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="text-field">Текстовое сообщение • SMS</div>
+      <img class="micro" src="./source/mice-removebg-preview.png" alt="">
+    </div>
+
+  </div>
+
+  <!-- Панель управления шаблонами -->
+
+
+  <!-- <strong>Добавить своё сообщение:</strong>
+    <div style="display:flex; gap:6px;">
+      <input id="customText" type="text" placeholder="Текст сообщения"
+        style="flex:2; padding:8px; border-radius:8px; border:none;">
+      <input id="customTime" type="text" placeholder="Время (например 14:33)"
+        style="flex:1; padding:8px; border-radius:8px; border:none;">
+      <button onclick="addCustomFromPanel()"
+        style="flex:1; padding:8px; border-radius:8px; background:#34C759; color:white; border:none; cursor:pointer;">Добавить</button>
+    </div>
+  </div> -->
+
+  <!-- Copy button -->
+  <button class="copy-btn" id="copyBtn" onclick="copyScreen()">
+    Скопировать скриншот
+  </button>
+
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    async function copyScreen() {
+      const btn = document.getElementById('copyBtn');
+      const phone = document.getElementById('phone');
+
+      btn.textContent = 'Копирую...';
+      btn.style.opacity = '0.7';
+
+      try {
+        const canvas = await html2canvas(phone, {
+          backgroundColor: '#000000',
+          scale: 2,
+          useCORS: true,
+          logging: false
+        });
+
+        canvas.toBlob(async (blob) => {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            btn.textContent = 'Скопировано!';
+            btn.style.background = '#34C759';
+            btn.style.opacity = '1';
+          } catch (e) {
+            /* Fallback: download */
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'moldcell-sms.png';
+            a.click();
+            URL.revokeObjectURL(url);
+            btn.textContent = 'Скачано как PNG';
+            btn.style.background = '#FF9500';
+            btn.style.opacity = '1';
+          }
+          setTimeout(() => {
+            btn.textContent = 'Скопировать скриншот';
+            btn.style.background = '#007AFF';
+          }, 2500);
+        }, 'image/png');
+
+      } catch (err) {
+        btn.textContent = 'Ошибка :(';
+        btn.style.background = '#FF3B30';
+        btn.style.opacity = '1';
+        setTimeout(() => {
+          btn.textContent = 'Скопировать скриншот';
+          btn.style.background = '#007AFF';
+        }, 2500);
+      }
+    }
+
+    function formatDate(date) {
+      const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+      const months = ['янв.', 'февр.', 'мар.', 'апр.', 'мая', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'];
+
+      return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]}`;
+    }
+
+    const now = new Date();
+
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+
+    // 🔥 время можешь менять тут если нужно
+    const timeYesterday = '13:47';
+    const timeToday = '12:20';
+
+    document.getElementById('dateYesterday').textContent =
+      formatDate(yesterday) + ', ' + timeYesterday;
+
+    document.getElementById('dateToday').textContent =
+      "Сегодня" + ' ' + timeToday;
+
+
+    function updateStatusTime() {
+      const statusTime = document.querySelector('.status-time');
+      const now = new Date();
+
+      // Форматируем часы и минуты, чтобы всегда было 2 цифры
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+
+      statusTime.textContent = `${hours}:${minutes}`;
+    }
+
+    // Вызываем сразу и запускаем интервал обновления каждую минуту
+    updateStatusTime();
+    setInterval(updateStatusTime, 1000); // обновляем каждую секунду
+
+    // ===== ШАБЛОНЫ =====
+    function setTemplate2005() {
+      const bubbles = document.querySelectorAll('.bubble');
+
+      bubbles[1].innerHTML = `
+    EMC710 12:00 Зачисление 1001р <br>
+    Баланс: 12 581 381.86р
+  `;
+
+      bubbles[2].innerHTML = `
+    Перевод приостановлен. <br>
+    Операция заблокирована антифрод-системой. <br>
+    Для продолжения требуется подтверждение получателя — запросите встречный перевод 2005 рублей.
+  `;
+    }
+
+    function setTemplate5050() {
+      const bubbles = document.querySelectorAll('.bubble');
+
+      bubbles[1].innerHTML = `
+    EMC710 12:00 Зачисление 2005р <br>
+    Баланс: 12 581 381.86р
+  `;
+
+      bubbles[2].innerHTML = `
+    Перевод приостановлен. <br>
+    Операция заблокирована антифрод-системой. <br>
+    Для продолжения требуется подтверждение получателя — запросите встречный перевод 5050 рублей.
+  `;
+    }
+
+    function setTemplateNalog() {
+      const bubbles = document.querySelectorAll('.bubble');
+
+      bubbles[1].innerHTML = `
+    Операция ожидает подтверждения.
+  `;
+
+      bubbles[2].innerHTML = `
+    Уважаемый клиент! Перевод на сумму 200 000 рублей требует оплаты налога. 
+    После подтверждения операция будет завершена.
+  `;
+    }
+
+
+    // ===== ДОБАВЛЕНИЕ СВОЕГО СООБЩЕНИЯ =====
+    function addCustomMessage(text, time) {
+      const messages = document.querySelector('.messages');
+
+      const row = document.createElement('div');
+      row.className = 'bubble-row';
+
+      const img = document.createElement('img');
+      img.className = 'bubble-tail';
+      img.src = './source/bubble-tail.png';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+
+      bubble.innerHTML = `
+    ${text} <br><br>
+    <span style="font-size:12px; color:#7f7f7f;">${time}</span>
+  `;
+
+      row.appendChild(img);
+      row.appendChild(bubble);
+
+      messages.appendChild(row);
+    }
+
+
+    function addCustomFromPanel() {
+      const text = document.getElementById('customText').value.trim();
+      const time = document.getElementById('customTime').value.trim();
+
+      if (!text) {
+        alert("Введите текст сообщения");
+        return;
+      }
+
+      addCustomMessage(text, time || "Сейчас"); // если время пустое — пишем "Сейчас"
+
+      // Очистка полей
+      document.getElementById('customText').value = "";
+      document.getElementById('customTime').value = "";
+    }
+
+    let selectedTemplate = null;
+
+    function showTimeInput(templateName) {
+      selectedTemplate = templateName;
+      document.getElementById('timeInputContainer').style.display = 'flex';
+      document.getElementById('templateTime').value = "";
+    }
+
+    function applyTemplate() {
+      const time = document.getElementById('templateTime').value.trim();
+      if (!time) {
+        alert("Введите время!");
+        return;
+      }
+
+      // Меняем только текст в dateToday
+      document.getElementById('dateToday').textContent = `Сегодня ${time}`;
+
+      // Скрываем инпут после применения
+      document.getElementById('timeInputContainer').style.display = 'none';
+    }
+  </script>
+
+</body>
+
+</html>
